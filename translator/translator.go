@@ -57,3 +57,18 @@ func TranslateWord(englishWord string) string {
 
 	return englishWord
 }
+
+func TranslateSentence(sentence string) string {
+	englishSentence := sentence
+	sentenceEndRx := regexp.MustCompile(`[.!?]$`)
+	if sentenceEndRx.MatchString(englishSentence) {
+		englishSentence = englishSentence[0 : len(englishSentence)-1]
+	}
+
+	sentenceParts := regexp.MustCompile(`\s+`).Split(englishSentence, -1)
+	for i, word := range sentenceParts {
+		sentenceParts[i] = TranslateWord(word)
+	}
+
+	return strings.Join(sentenceParts, " ") + sentence[len(sentence)-1:]
+}

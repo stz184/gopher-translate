@@ -47,10 +47,26 @@ func wordHandler(w http.ResponseWriter, r *http.Request) {
 	server.ToJSON(w, response)
 }
 
+func sentenceHandler(w http.ResponseWriter, r *http.Request) {
+	reqBody, err := ioutil.ReadAll(r.Body)
+
+	var sentenceRequest models.SentenceRequest
+	err = json.Unmarshal(reqBody, &sentenceRequest)
+	if err != nil {
+		server.RespondWithError(w, "Please, provide a sentence")
+		return
+	}
+
+	translatedSentence := translator.TranslateSentence(sentenceRequest.Sentence)
+	response := models.SentenceResponse{Sentence: translatedSentence}
+	server.ToJSON(w, response)
+}
+
 func handleRequests() {
 	myRouter := mux.NewRouter().StrictSlash(true)
 	myRouter.HandleFunc("/", homePageHandler)
 	myRouter.HandleFunc("/word", wordHandler).Methods("POST")
+	myRouter.HandleFunc("/sentence", sentenceHandler).Methods("POST")
 	log.Fatal(http.ListenAndServe(":10000", myRouter))
 }
 
