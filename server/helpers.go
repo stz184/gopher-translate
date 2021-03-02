@@ -7,8 +7,9 @@ import (
 	"net/http"
 )
 
-func ToJSON(w http.ResponseWriter, r interface{}) {
+func encodeOutput(w http.ResponseWriter, r interface{}, statusCode int) {
 	w.Header().Set("Content-type", "application/json")
+	w.WriteHeader(statusCode)
 	err := json.NewEncoder(w).Encode(r)
 	if err != nil {
 		log.Printf("Failed to serialize the response: %s\n", err)
@@ -16,7 +17,11 @@ func ToJSON(w http.ResponseWriter, r interface{}) {
 	}
 }
 
+func ToJSON(w http.ResponseWriter, r interface{}) {
+	encodeOutput(w, r, http.StatusOK)
+}
+
 func RespondWithError(w http.ResponseWriter, error string) {
 	var errorResponse = models.ErrorResponse{Error: error}
-	ToJSON(w, errorResponse)
+	encodeOutput(w, errorResponse, http.StatusBadRequest)
 }

@@ -1,72 +1,18 @@
 package main
 
 import (
-	"encoding/json"
-	"fmt"
 	"github.com/gorilla/mux"
-	"gitlab.com/stz184/gopher-translator/models"
 	"gitlab.com/stz184/gopher-translator/server"
-	"gitlab.com/stz184/gopher-translator/translator"
-	"io/ioutil"
 	"log"
 	"net/http"
-	"regexp"
 )
-
-func homePageHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Welcome to Gopher translator service!")
-}
-
-func wordHandler(w http.ResponseWriter, r *http.Request) {
-	reqBody, err := ioutil.ReadAll(r.Body)
-
-	var wordRequest models.WordRequest
-	err = json.Unmarshal(reqBody, &wordRequest)
-	if err != nil {
-		server.RespondWithError(w, "Please, provide a word")
-		return
-	}
-
-	words := regexp.MustCompile(`\s+`).Split(wordRequest.Word, 2)
-	if len(words) < 1 {
-		server.RespondWithError(w, "Please, provide a non empty word.")
-	}
-
-	if len(words) > 1 {
-		server.RespondWithError(w, "Please, provide a single word or use /sentence to translate sentences.")
-		return
-	}
-
-	if wordRequest.Word == "" {
-		server.RespondWithError(w, "Please, provide a word")
-		return
-	}
-
-	translatedWord := translator.TranslateWord(wordRequest.Word)
-	response := models.WordResponse{Word: translatedWord}
-	server.ToJSON(w, response)
-}
-
-func sentenceHandler(w http.ResponseWriter, r *http.Request) {
-	reqBody, err := ioutil.ReadAll(r.Body)
-
-	var sentenceRequest models.SentenceRequest
-	err = json.Unmarshal(reqBody, &sentenceRequest)
-	if err != nil {
-		server.RespondWithError(w, "Please, provide a sentence")
-		return
-	}
-
-	translatedSentence := translator.TranslateSentence(sentenceRequest.Sentence)
-	response := models.SentenceResponse{Sentence: translatedSentence}
-	server.ToJSON(w, response)
-}
 
 func handleRequests() {
 	myRouter := mux.NewRouter().StrictSlash(true)
-	myRouter.HandleFunc("/", homePageHandler)
-	myRouter.HandleFunc("/word", wordHandler).Methods("POST")
-	myRouter.HandleFunc("/sentence", sentenceHandler).Methods("POST")
+	myRouter.HandleFunc("/", server.HomePageHandler)
+	myRouter.HandleFunc("/word", server.WordHandler).Methods("POST")
+	myRouter.HandleFunc("/sentence", server.SentenceHandler).Methods("POST")
+	myRouter.HandleFunc("/history", server.HistoryHandler).Methods("GET")
 	log.Fatal(http.ListenAndServe(":10000", myRouter))
 }
 
