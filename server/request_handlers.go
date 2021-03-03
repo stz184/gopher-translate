@@ -75,7 +75,7 @@ func SentenceHandler(w http.ResponseWriter, r *http.Request) {
 
 func HistoryHandler(w http.ResponseWriter, r *http.Request) {
 	var historyLen = len(history)
-	var historyJSON = make([]map[string]string, historyLen)
+	var historyJSON = make([]map[string]string, 0, historyLen)
 
 	englishInput := make([]string, 0, historyLen)
 	for k := range history {
