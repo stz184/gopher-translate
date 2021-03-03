@@ -20,6 +20,10 @@ func HomePageHandler(w http.ResponseWriter, r *http.Request) {
 
 func WordHandler(w http.ResponseWriter, r *http.Request) {
 	reqBody, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		RespondWithError(w, "Error reading the request body")
+		return
+	}
 
 	var wordRequest models.WordRequest
 	err = json.Unmarshal(reqBody, &wordRequest)
@@ -48,6 +52,10 @@ func WordHandler(w http.ResponseWriter, r *http.Request) {
 
 func SentenceHandler(w http.ResponseWriter, r *http.Request) {
 	reqBody, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		RespondWithError(w, "Error reading the request body")
+		return
+	}
 
 	var sentenceRequest models.SentenceRequest
 	err = json.Unmarshal(reqBody, &sentenceRequest)
