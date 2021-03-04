@@ -2,8 +2,8 @@ package server
 
 import (
 	"encoding/json"
-	"gitlab.com/stz184/gopher-translator/models"
-	"gitlab.com/stz184/gopher-translator/translator"
+	"github.com/stz184/gopher-translator/models"
+	"github.com/stz184/gopher-translator/translator"
 	"io/ioutil"
 	"net/http"
 	"regexp"

@@ -2,7 +2,7 @@ package main
 
 import (
 	"github.com/gorilla/mux"
-	"gitlab.com/stz184/gopher-translator/server"
+	"github.com/stz184/gopher-translator/server"
 	"log"
 	"net/http"
 )
